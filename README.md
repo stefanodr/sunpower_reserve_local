@@ -11,7 +11,7 @@ battery control): this one only **reads**, it never writes. Only Modbus function
 
 ## Requirements
 
-- The inverter's **LAN port** connected to your network (cable to router / powerline). It gets its own IP (e.g. `192.168.1.45`), different from the Wi-Fi dongle.
+- The inverter's **LAN port** connected to your network (cable to router / powerline). It gets its own IP (an address from your own network, e.g. `<inverter-ip>`), different from the Wi-Fi dongle. Find it in your router's device list (the LAN port usually appears as a "WIZnet" device).
 - Modbus TCP on port `502`, unit ID `85` (defaults).
 - The inverter accepts **one Modbus TCP connection at a time**: don't run other Modbus clients against it.
 

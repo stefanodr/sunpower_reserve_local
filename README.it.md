@@ -11,7 +11,7 @@ questa **legge soltanto**, non scrive mai. Usa solo la funzione Modbus 3.
 
 ## Requisiti
 
-- **Porta LAN dell'inverter** collegata alla rete (cavo al router / powerline). Ha un IP proprio (es. `192.168.1.45`), diverso dal dongle Wi-Fi.
+- **Porta LAN dell'inverter** collegata alla rete (cavo al router / powerline). Ha un IP proprio (un indirizzo della tua rete, es. `<IP-inverter>`), diverso dal dongle Wi-Fi. Lo trovi nell'elenco dispositivi del router (la porta LAN di solito compare come dispositivo "WIZnet").
 - Modbus TCP porta `502`, ID unità `85` (valori predefiniti).
 - L'inverter accetta **una sola connessione Modbus TCP alla volta**: non usare altri client Modbus.
 
