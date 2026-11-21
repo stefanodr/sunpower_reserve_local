@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.1 – 2026-11-21
+
+### English
+- Added integration icon (original artwork, in the `brand/` folder).
+- Documentation and repository metadata fixes.
+
+### Italiano
+- Aggiunta l'icona dell'integrazione (grafica originale, nella cartella `brand/`).
+- Correzioni a documentazione e metadati del repository.
+
 ## 0.1.0 – 2026-11-21
 
 ### English

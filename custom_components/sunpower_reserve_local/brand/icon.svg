@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#14304a"/><stop offset="1" stop-color="#0a1b2b"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="48" fill="url(#bg)"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(20.5 8) scale(0.84)">
+    <!-- sun -->
+    <g stroke="#f2b134" stroke-width="4">
+      <circle cx="78" cy="64" r="15"/>
+      <line x1="78" y1="39" x2="78" y2="33"/><line x1="78" y1="89" x2="78" y2="95"/>
+      <line x1="53" y1="64" x2="47" y2="64"/><line x1="103" y1="64" x2="109" y2="64"/>
+      <line x1="60.3" y1="46.3" x2="56" y2="42"/><line x1="95.7" y1="81.7" x2="100" y2="86"/>
+      <line x1="95.7" y1="46.3" x2="100" y2="42"/><line x1="60.3" y1="81.7" x2="56" y2="86"/>
+    </g>
+    <!-- solar panel -->
+    <g stroke="#cfe3f2" stroke-width="3.5">
+      <polygon points="30,198 126,198 110,126 46,126" fill="#173f5e"/>
+      <line x1="38" y1="162" x2="118" y2="162" stroke-width="2.5"/>
+      <line x1="62" y1="126" x2="54" y2="198" stroke-width="2.5"/>
+      <line x1="78" y1="126" x2="78" y2="198" stroke-width="2.5"/>
+      <line x1="94" y1="126" x2="102" y2="198" stroke-width="2.5"/>
+    </g>
+    <!-- energy flow -->
+    <g stroke="#3fb8a5" stroke-width="3">
+      <polyline points="118,162 140,162 140,88 152,88"/>
+      <line x1="190" y1="130" x2="190" y2="146"/>
+    </g>
+    <!-- inverter -->
+    <rect x="152" y="44" width="76" height="86" rx="10" fill="#173f5e" stroke="#cfe3f2" stroke-width="3.5"/>
+    <rect x="164" y="56" width="52" height="26" rx="4" fill="#0a1b2b" stroke="#3a6382" stroke-width="2"/>
+    <path d="M170 69 q6 -10 12 0 t12 0 t12 0" stroke="#3fb8a5" stroke-width="3"/>
+    <g stroke="#cfe3f2" stroke-width="3"><line x1="166" y1="100" x2="214" y2="100"/><line x1="166" y1="112" x2="214" y2="112"/></g>
+    <!-- battery -->
+    <rect x="178" y="146" width="24" height="7" rx="2" fill="#cfe3f2" stroke="none"/>
+    <rect x="152" y="153" width="76" height="56" rx="10" fill="#173f5e" stroke="#cfe3f2" stroke-width="3.5"/>
+    <g fill="#3fb8a5" stroke="none">
+      <rect x="162" y="164" width="14" height="34" rx="3"/><rect x="180" y="164" width="14" height="34" rx="3"/>
+      <rect x="198" y="164" width="14" height="34" rx="3" opacity="0.3"/>
+    </g>
+  </g>
+  <line x1="64" y1="191" x2="192" y2="191" stroke="#3a6382" stroke-width="1.5"/>
+  <text x="128" y="210" text-anchor="middle" textLength="176" lengthAdjust="spacing" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="17" fill="#e6f0f7">SUNPOWER RESERVE</text>
+  <text x="128" y="231" text-anchor="middle" textLength="64" lengthAdjust="spacing" font-family="Helvetica, Arial, sans-serif" font-weight="700" font-size="13" fill="#3fb8a5">LOCAL</text>
+</svg>
