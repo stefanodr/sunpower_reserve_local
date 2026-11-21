@@ -1,0 +1,122 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Collegati all'inverter",
+        "description": "Connessione locale Modbus TCP in sola lettura alla porta LAN dell'inverter.",
+        "data": {
+          "host": "Indirizzo IP",
+          "port": "Porta",
+          "unit": "ID unità Modbus"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile leggere dall'inverter. Controlla IP, porta, ID unità e che nessun altro client Modbus sia connesso."
+    },
+    "abort": {
+      "already_configured": "Questo inverter è già configurato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "data": {
+          "scan_interval": "Intervallo di lettura (secondi)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "grid_energy_export": {
+        "name": "Energia esportata in rete"
+      },
+      "grid_energy_import": {
+        "name": "Energia prelevata dalla rete"
+      },
+      "grid_voltage": {
+        "name": "Tensione di rete"
+      },
+      "grid_current": {
+        "name": "Corrente di rete (sperimentale)"
+      },
+      "grid_frequency": {
+        "name": "Frequenza di rete"
+      },
+      "grid_power": {
+        "name": "Potenza di rete (negativa = immissione)"
+      },
+      "battery_voltage": {
+        "name": "Tensione batteria"
+      },
+      "battery_current": {
+        "name": "Corrente batteria (negativa = carica)"
+      },
+      "battery_soc": {
+        "name": "Carica batteria"
+      },
+      "battery_power": {
+        "name": "Potenza batteria (negativa = carica)"
+      },
+      "battery_energy_charged": {
+        "name": "Energia caricata in batteria"
+      },
+      "battery_energy_discharged": {
+        "name": "Energia scaricata dalla batteria"
+      },
+      "battery_energy_charged_from_grid": {
+        "name": "Energia caricata da rete (sperimentale)"
+      },
+      "battery_cell_voltage_1": {
+        "name": "Tensione cella batteria 1 (sperimentale)"
+      },
+      "battery_cell_voltage_2": {
+        "name": "Tensione cella batteria 2 (sperimentale)"
+      },
+      "battery_max_charge_current": {
+        "name": "Corrente massima di carica (sperimentale)"
+      },
+      "battery_max_discharge_current": {
+        "name": "Corrente massima di scarica (sperimentale)"
+      },
+      "inverter_voltage": {
+        "name": "Tensione AC inverter"
+      },
+      "inverter_power_l1": {
+        "name": "Potenza inverter L1 (sperimentale)"
+      },
+      "inverter_power": {
+        "name": "Potenza inverter"
+      },
+      "inverter_temperature": {
+        "name": "Temperatura inverter (sperimentale)"
+      },
+      "pv1_voltage": {
+        "name": "Tensione PV1"
+      },
+      "pv1_current": {
+        "name": "Corrente PV1"
+      },
+      "pv1_power": {
+        "name": "Potenza PV1"
+      },
+      "pv2_voltage": {
+        "name": "Tensione PV2"
+      },
+      "pv2_current": {
+        "name": "Corrente PV2"
+      },
+      "pv2_power": {
+        "name": "Potenza PV2"
+      },
+      "pv_power": {
+        "name": "Potenza fotovoltaico"
+      },
+      "house_load": {
+        "name": "Consumo casa (sperimentale)"
+      }
+    }
+  }
+}

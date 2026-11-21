@@ -1,0 +1,122 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to the inverter",
+        "description": "Local read-only Modbus TCP connection to the inverter LAN port.",
+        "data": {
+          "host": "IP address",
+          "port": "Port",
+          "unit": "Modbus unit ID"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot read from the inverter. Check IP, port, unit ID and that no other Modbus client is connected."
+    },
+    "abort": {
+      "already_configured": "This inverter is already configured."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "grid_energy_export": {
+        "name": "Grid energy exported"
+      },
+      "grid_energy_import": {
+        "name": "Grid energy imported"
+      },
+      "grid_voltage": {
+        "name": "Grid voltage"
+      },
+      "grid_current": {
+        "name": "Grid current (experimental)"
+      },
+      "grid_frequency": {
+        "name": "Grid frequency"
+      },
+      "grid_power": {
+        "name": "Grid power (negative = export)"
+      },
+      "battery_voltage": {
+        "name": "Battery voltage"
+      },
+      "battery_current": {
+        "name": "Battery current (negative = charging)"
+      },
+      "battery_soc": {
+        "name": "Battery charge"
+      },
+      "battery_power": {
+        "name": "Battery power (negative = charging)"
+      },
+      "battery_energy_charged": {
+        "name": "Battery energy charged"
+      },
+      "battery_energy_discharged": {
+        "name": "Battery energy discharged"
+      },
+      "battery_energy_charged_from_grid": {
+        "name": "Battery energy charged from grid (experimental)"
+      },
+      "battery_cell_voltage_1": {
+        "name": "Battery cell voltage 1 (experimental)"
+      },
+      "battery_cell_voltage_2": {
+        "name": "Battery cell voltage 2 (experimental)"
+      },
+      "battery_max_charge_current": {
+        "name": "Battery max charge current (experimental)"
+      },
+      "battery_max_discharge_current": {
+        "name": "Battery max discharge current (experimental)"
+      },
+      "inverter_voltage": {
+        "name": "Inverter AC voltage"
+      },
+      "inverter_power_l1": {
+        "name": "Inverter power L1 (experimental)"
+      },
+      "inverter_power": {
+        "name": "Inverter power"
+      },
+      "inverter_temperature": {
+        "name": "Inverter temperature (experimental)"
+      },
+      "pv1_voltage": {
+        "name": "PV1 voltage"
+      },
+      "pv1_current": {
+        "name": "PV1 current"
+      },
+      "pv1_power": {
+        "name": "PV1 power"
+      },
+      "pv2_voltage": {
+        "name": "PV2 voltage"
+      },
+      "pv2_current": {
+        "name": "PV2 current"
+      },
+      "pv2_power": {
+        "name": "PV2 power"
+      },
+      "pv_power": {
+        "name": "PV power"
+      },
+      "house_load": {
+        "name": "House load (experimental)"
+      }
+    }
+  }
+}
