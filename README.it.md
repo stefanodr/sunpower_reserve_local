@@ -35,14 +35,18 @@ poi inserisci l'IP dell'inverter (porta 502, unità 85). L'intervallo di lettura
 
 ## Sensori
 
-Rete (energia prelevata/immessa, potenza, tensione, frequenza), batteria (SOC, potenza, tensione, corrente,
-energia caricata/scaricata), inverter (potenza, tensione), PV1/PV2 (V, A, W) e potenza FV totale.
+- **Rete:** energia prelevata/immessa, potenza, tensione, frequenza, corrente, stato rete.
+- **Batteria:** carica (SOC), potenza, tensione, corrente, energia caricata/scaricata, energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, stato batteria.
+- **Inverter:** potenza, tensione, temperatura.
+- **Fotovoltaico:** tensione, corrente e potenza di PV1/PV2, potenza FV totale.
+- **Casa:** consumo casa (FV + batteria + rete).
+- **Totali energia e periodi:** totali stimati di energia FV e consumata (integrati dalla potenza) e contatori giornalieri, settimanali, mensili e annuali per FV, casa, prelievo/immissione in rete e carica/scarica batteria.
+
 Segni: potenza di rete negativa = immissione; potenza/corrente batteria negative = carica.
 
-I sensori *sperimentali* (corrente di rete, tensioni celle, temperatura, energia caricata da rete,
-correnti massime, potenza L1, consumo casa) sono **disabilitati di default**: la mappa dei registri è stata
-decodificata per osservazione e confrontata coi valori cloud (SOC e totali energia di rete/batteria coincidono),
-ma questi vanno ancora confermati. Confronta con l'app e segnala le differenze.
+L'energia FV e quella consumata non hanno un registro leggibile sull'inverter, quindi vengono integrate dalla potenza a ogni lettura. Totali e inizio dei periodi vengono salvati e restano dopo i riavvii; i periodi iniziano a contare dalla prima esecuzione. Nelle opzioni puoi aggiungere un offset ai totali FV e casa (ad esempio per allinearli a un'altra fonte) e impostare la capacità utilizzabile della batteria (predefinita 9,576 kWh) usata dal sensore di energia immagazzinata.
+
+Il controllo della batteria (programma di carica, limite di esportazione) non è disponibile in locale: per quello tieni l'integrazione cloud.
 
 ## Risoluzione problemi
 

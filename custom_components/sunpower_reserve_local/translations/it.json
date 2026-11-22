@@ -23,8 +23,12 @@
       "init": {
         "title": "Opzioni",
         "data": {
-          "scan_interval": "Intervallo di lettura (secondi)"
-        }
+          "scan_interval": "Intervallo di lettura (secondi)",
+          "pv_energy_offset": "Offset energia FV (kWh)",
+          "house_energy_offset": "Offset energia casa (kWh)",
+          "battery_usable_capacity": "Capacità utilizzabile batteria (kWh)"
+        },
+        "description": "Gli offset si sommano ai totali di energia FV e casa, ad esempio per allinearli a un'altra fonte. I contatori per periodo non cambiano."
       }
     }
   },
@@ -40,7 +44,7 @@
         "name": "Tensione di rete"
       },
       "grid_current": {
-        "name": "Corrente di rete (sperimentale)"
+        "name": "Corrente di rete"
       },
       "grid_frequency": {
         "name": "Frequenza di rete"
@@ -67,31 +71,31 @@
         "name": "Energia scaricata dalla batteria"
       },
       "battery_energy_charged_from_grid": {
-        "name": "Energia caricata da rete (sperimentale)"
+        "name": "Energia caricata da rete"
       },
       "battery_cell_voltage_1": {
-        "name": "Tensione cella batteria 1 (sperimentale)"
+        "name": "Tensione cella batteria 1"
       },
       "battery_cell_voltage_2": {
-        "name": "Tensione cella batteria 2 (sperimentale)"
+        "name": "Tensione cella batteria 2"
       },
       "battery_max_charge_current": {
-        "name": "Corrente massima di carica (sperimentale)"
+        "name": "Corrente massima di carica"
       },
       "battery_max_discharge_current": {
-        "name": "Corrente massima di scarica (sperimentale)"
+        "name": "Corrente massima di scarica"
       },
       "inverter_voltage": {
         "name": "Tensione AC inverter"
       },
       "inverter_power_l1": {
-        "name": "Potenza inverter L1 (sperimentale)"
+        "name": "Potenza inverter L1"
       },
       "inverter_power": {
         "name": "Potenza inverter"
       },
       "inverter_temperature": {
-        "name": "Temperatura inverter (sperimentale)"
+        "name": "Temperatura inverter"
       },
       "pv1_voltage": {
         "name": "Tensione PV1"
@@ -115,7 +119,104 @@
         "name": "Potenza fotovoltaico"
       },
       "house_load": {
-        "name": "Consumo casa (sperimentale)"
+        "name": "Consumo casa"
+      },
+      "pv_energy": {
+        "name": "Energia fotovoltaica (stimata)"
+      },
+      "house_energy": {
+        "name": "Energia consumata (stimata)"
+      },
+      "pv_energy_daily": {
+        "name": "Energia fotovoltaica giornaliera"
+      },
+      "pv_energy_weekly": {
+        "name": "Energia fotovoltaica settimanale"
+      },
+      "pv_energy_monthly": {
+        "name": "Energia fotovoltaica mensile"
+      },
+      "pv_energy_yearly": {
+        "name": "Energia fotovoltaica annuale"
+      },
+      "house_energy_daily": {
+        "name": "Energia consumata giornaliera"
+      },
+      "house_energy_weekly": {
+        "name": "Energia consumata settimanale"
+      },
+      "house_energy_monthly": {
+        "name": "Energia consumata mensile"
+      },
+      "house_energy_yearly": {
+        "name": "Energia consumata annuale"
+      },
+      "grid_energy_export_daily": {
+        "name": "Energia esportata in rete giornaliera"
+      },
+      "grid_energy_export_weekly": {
+        "name": "Energia esportata in rete settimanale"
+      },
+      "grid_energy_export_monthly": {
+        "name": "Energia esportata in rete mensile"
+      },
+      "grid_energy_export_yearly": {
+        "name": "Energia esportata in rete annuale"
+      },
+      "grid_energy_import_daily": {
+        "name": "Energia prelevata dalla rete giornaliera"
+      },
+      "grid_energy_import_weekly": {
+        "name": "Energia prelevata dalla rete settimanale"
+      },
+      "grid_energy_import_monthly": {
+        "name": "Energia prelevata dalla rete mensile"
+      },
+      "grid_energy_import_yearly": {
+        "name": "Energia prelevata dalla rete annuale"
+      },
+      "battery_energy_charged_daily": {
+        "name": "Energia caricata in batteria giornaliera"
+      },
+      "battery_energy_charged_weekly": {
+        "name": "Energia caricata in batteria settimanale"
+      },
+      "battery_energy_charged_monthly": {
+        "name": "Energia caricata in batteria mensile"
+      },
+      "battery_energy_charged_yearly": {
+        "name": "Energia caricata in batteria annuale"
+      },
+      "battery_energy_discharged_daily": {
+        "name": "Energia scaricata dalla batteria giornaliera"
+      },
+      "battery_energy_discharged_weekly": {
+        "name": "Energia scaricata dalla batteria settimanale"
+      },
+      "battery_energy_discharged_monthly": {
+        "name": "Energia scaricata dalla batteria mensile"
+      },
+      "battery_energy_discharged_yearly": {
+        "name": "Energia scaricata dalla batteria annuale"
+      },
+      "battery_state": {
+        "name": "Stato batteria",
+        "state": {
+          "charging": "In carica",
+          "discharging": "In scarica",
+          "idle": "Inattiva"
+        }
+      },
+      "grid_state": {
+        "name": "Stato rete",
+        "state": {
+          "importing": "In prelievo",
+          "exporting": "In immissione",
+          "idle": "Inattiva"
+        }
+      },
+      "battery_stored_energy": {
+        "name": "Energia immagazzinata in batteria"
       }
     }
   }

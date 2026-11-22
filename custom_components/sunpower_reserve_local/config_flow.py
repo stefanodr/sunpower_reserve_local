@@ -11,10 +11,14 @@ from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import callback
 
 from .const import (
+    CONF_HOUSE_OFFSET,
+    CONF_PV_OFFSET,
     CONF_SCAN_INTERVAL,
     CONF_UNIT,
     DEFAULT_PORT,
+    CONF_USABLE_CAPACITY,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_USABLE_CAPACITY,
     DEFAULT_UNIT,
     DOMAIN,
     MAX_SCAN_INTERVAL,
@@ -74,12 +78,23 @@ class SunPowerReserveOptionsFlow(OptionsFlow):
     ) -> ConfigFlowResult:
         if user_input is not None:
             return self.async_create_entry(data=user_input)
-        current = self.config_entry.options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL)
+        opts = self.config_entry.options
         schema = vol.Schema(
             {
-                vol.Required(CONF_SCAN_INTERVAL, default=current): vol.All(
-                    int, vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)
-                )
+                vol.Required(
+                    CONF_SCAN_INTERVAL,
+                    default=opts.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL),
+                ): vol.All(int, vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL)),
+                vol.Required(
+                    CONF_PV_OFFSET, default=opts.get(CONF_PV_OFFSET, 0.0)
+                ): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                vol.Required(
+                    CONF_HOUSE_OFFSET, default=opts.get(CONF_HOUSE_OFFSET, 0.0)
+                ): vol.All(vol.Coerce(float), vol.Range(min=0)),
+                vol.Required(
+                    CONF_USABLE_CAPACITY,
+                    default=opts.get(CONF_USABLE_CAPACITY, DEFAULT_USABLE_CAPACITY),
+                ): vol.All(vol.Coerce(float), vol.Range(min=0.1, max=100)),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

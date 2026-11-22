@@ -15,7 +15,10 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import SunPowerReserveCoordinator
-from .registers import DERIVED, REGISTERS
+from .energy import INTEGRATED, period_sensor_keys
+from .registers import DERIVED, REGISTERS, STATE_SENSORS
+
+T = "total_increasing"
 
 
 async def async_setup_entry(
@@ -23,7 +26,7 @@ async def async_setup_entry(
 ) -> None:
     """Set up sensors."""
     coordinator: SunPowerReserveCoordinator = entry.runtime_data
-    entities = [
+    entities: list[SensorEntity] = [
         SunPowerReserveSensor(coordinator, entry, r.key, r.unit, r.device_class,
                               r.state_class, r.enabled, r.precision)
         for r in REGISTERS
@@ -32,11 +35,32 @@ async def async_setup_entry(
         SunPowerReserveSensor(coordinator, entry, key, *spec)
         for key, spec in DERIVED.items()
     ]
+    entities += [
+        SunPowerReserveSensor(coordinator, entry, key, "kWh", "energy", T, True, 2)
+        for key in INTEGRATED.values()
+    ]
+    entities += [
+        SunPowerReserveSensor(coordinator, entry, key, "kWh", "energy", T, enabled, 2)
+        for key, enabled in period_sensor_keys()
+    ]
+    entities += [
+        SunPowerReserveStateSensor(coordinator, entry, key, options)
+        for key, options in STATE_SENSORS.items()
+    ]
     async_add_entities(entities)
 
 
+def _device_info(entry: ConfigEntry) -> DeviceInfo:
+    return DeviceInfo(
+        identifiers={(DOMAIN, entry.entry_id)},
+        manufacturer="SunPower (AlphaESS)",
+        model="Reserve inverter (Modbus TCP)",
+        name="SunPower Reserve",
+    )
+
+
 class SunPowerReserveSensor(CoordinatorEntity[SunPowerReserveCoordinator], SensorEntity):
-    """A value read from the inverter."""
+    """A numeric value read or derived from the inverter."""
 
     _attr_has_entity_name = True
 
@@ -51,13 +75,29 @@ class SunPowerReserveSensor(CoordinatorEntity[SunPowerReserveCoordinator], Senso
         self._attr_state_class = SensorStateClass(state_class) if state_class else None
         self._attr_entity_registry_enabled_default = enabled
         self._attr_suggested_display_precision = precision
-        self._attr_device_info = DeviceInfo(
-            identifiers={(DOMAIN, entry.entry_id)},
-            manufacturer="SunPower (AlphaESS)",
-            model="Reserve inverter (Modbus TCP)",
-            name="SunPower Reserve",
-        )
+        self._attr_device_info = _device_info(entry)
 
     @property
     def native_value(self) -> float | None:
+        return self.coordinator.data.get(self._key)
+
+
+class SunPowerReserveStateSensor(
+    CoordinatorEntity[SunPowerReserveCoordinator], SensorEntity
+):
+    """A text state (charging, importing, ...)."""
+
+    _attr_has_entity_name = True
+    _attr_device_class = SensorDeviceClass.ENUM
+
+    def __init__(self, coordinator, entry, key, options) -> None:
+        super().__init__(coordinator)
+        self._key = key
+        self._attr_unique_id = f"{entry.entry_id}_{key}"
+        self._attr_translation_key = key
+        self._attr_options = options
+        self._attr_device_info = _device_info(entry)
+
+    @property
+    def native_value(self) -> str | None:
         return self.coordinator.data.get(self._key)

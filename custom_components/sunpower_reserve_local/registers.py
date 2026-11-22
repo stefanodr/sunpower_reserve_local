@@ -21,7 +21,7 @@ class Reg:
     unit: str | None
     device_class: str | None
     state_class: str | None
-    enabled: bool = True  # False = experimental / diagnostic
+    enabled: bool = True
     precision: int | None = None
 
 
@@ -32,7 +32,7 @@ REGISTERS: list[Reg] = [
     Reg("grid_energy_export", 0x0010, "u32", 0.01, "kWh", "energy", T, True, 2),
     Reg("grid_energy_import", 0x0012, "u32", 0.01, "kWh", "energy", T, True, 2),
     Reg("grid_voltage", 0x0014, "u16", 1, "V", "voltage", M, True, 0),
-    Reg("grid_current", 0x0017, "s16", 0.1, "A", "current", M, False, 1),
+    Reg("grid_current", 0x0017, "s16", 0.1, "A", "current", M, True, 1),
     Reg("grid_frequency", 0x001A, "u16", 0.01, "Hz", "frequency", M, True, 2),
     Reg("grid_power", 0x001B, "s32", 1, "W", "power", M, True, 0),
     # Battery
@@ -42,16 +42,16 @@ REGISTERS: list[Reg] = [
     Reg("battery_power", 0x0126, "s16", 1, "W", "power", M, True, 0),
     Reg("battery_energy_charged", 0x0120, "u32", 0.1, "kWh", "energy", T, True, 1),
     Reg("battery_energy_discharged", 0x0122, "u32", 0.1, "kWh", "energy", T, True, 1),
-    Reg("battery_energy_charged_from_grid", 0x0124, "u32", 0.1, "kWh", "energy", T, False, 1),
-    Reg("battery_cell_voltage_1", 0x0107, "u16", 1, "mV", "voltage", M, False, 0),
-    Reg("battery_cell_voltage_2", 0x010A, "u16", 1, "mV", "voltage", M, False, 0),
-    Reg("battery_max_charge_current", 0x0111, "u16", 0.1, "A", "current", M, False, 1),
-    Reg("battery_max_discharge_current", 0x0112, "u16", 0.1, "A", "current", M, False, 1),
+    Reg("battery_energy_charged_from_grid", 0x0124, "u32", 0.1, "kWh", "energy", T, True, 1),
+    Reg("battery_cell_voltage_1", 0x0107, "u16", 1, "mV", "voltage", M, True, 0),
+    Reg("battery_cell_voltage_2", 0x010A, "u16", 1, "mV", "voltage", M, True, 0),
+    Reg("battery_max_charge_current", 0x0111, "u16", 0.1, "A", "current", M, True, 1),
+    Reg("battery_max_discharge_current", 0x0112, "u16", 0.1, "A", "current", M, True, 1),
     # Inverter
     Reg("inverter_voltage", 0x0400, "u16", 0.1, "V", "voltage", M, True, 1),
-    Reg("inverter_power_l1", 0x0406, "s32", 1, "W", "power", M, False, 0),
+    Reg("inverter_power_l1", 0x0406, "s32", 1, "W", "power", M, True, 0),
     Reg("inverter_power", 0x040C, "s32", 1, "W", "power", M, True, 0),
-    Reg("inverter_temperature", 0x0435, "s16", 0.1, "°C", "temperature", M, False, 1),
+    Reg("inverter_temperature", 0x0435, "s16", 0.1, "°C", "temperature", M, True, 1),
     # PV
     Reg("pv1_voltage", 0x041D, "u16", 0.1, "V", "voltage", M, True, 1),
     Reg("pv1_current", 0x041E, "u16", 0.1, "A", "current", M, True, 1),
@@ -64,7 +64,17 @@ REGISTERS: list[Reg] = [
 # Derived sensors: key -> (unit, device_class, state_class, enabled, precision)
 DERIVED = {
     "pv_power": ("W", "power", M, True, 0),
-    "house_load": ("W", "power", M, False, 0),
+    "house_load": ("W", "power", M, True, 0),
+    "battery_stored_energy": ("kWh", "energy_storage", M, True, 2),  # energy.py
+}
+
+# Below this power (W) the battery / grid is reported as idle
+IDLE_THRESHOLD_W = 20
+
+# Text state sensors: key -> allowed values
+STATE_SENSORS = {
+    "battery_state": ["charging", "discharging", "idle"],
+    "grid_state": ["importing", "exporting", "idle"],
 }
 
 
@@ -84,9 +94,11 @@ def _decode(reg: Reg, regs: dict[int, int]) -> float | None:
     return round(value, reg.precision) if reg.precision is not None else value
 
 
-def decode(regs: dict[int, int]) -> dict[str, float | None]:
+def decode(regs: dict[int, int]) -> dict[str, float | str | None]:
     """Decode raw registers into sensor values."""
-    data = {reg.key: _decode(reg, regs) for reg in REGISTERS}
+    data: dict[str, float | str | None] = {
+        reg.key: _decode(reg, regs) for reg in REGISTERS
+    }
     p1, p2 = data["pv1_power"], data["pv2_power"]
     data["pv_power"] = None if p1 is None or p2 is None else p1 + p2
     # house load = PV + battery discharge + grid import
@@ -95,5 +107,18 @@ def decode(regs: dict[int, int]) -> dict[str, float | None]:
     data["house_load"] = (
         None if p1 is None or p2 is None or batt is None or grid is None
         else p1 + p2 + batt + grid
+    )
+    # state sensors (battery_power: negative = charging; grid_power: negative = export)
+    data["battery_state"] = (
+        None if batt is None
+        else "discharging" if batt > IDLE_THRESHOLD_W
+        else "charging" if batt < -IDLE_THRESHOLD_W
+        else "idle"
+    )
+    data["grid_state"] = (
+        None if grid is None
+        else "importing" if grid > IDLE_THRESHOLD_W
+        else "exporting" if grid < -IDLE_THRESHOLD_W
+        else "idle"
     )
     return data

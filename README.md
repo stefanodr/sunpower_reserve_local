@@ -35,14 +35,18 @@ the inverter's IP (port 502, unit 85). Polling interval (default 15 s, min 10 s)
 
 ## Sensors
 
-Grid (import/export energy, power, voltage, frequency), battery (SOC, power, voltage, current,
-charged/discharged energy), inverter (power, voltage), PV1/PV2 (V, A, W) and total PV power.
+- **Grid:** import/export energy, power, voltage, frequency, current, grid state.
+- **Battery:** charge (SOC), power, voltage, current, charged/discharged energy, energy charged from grid, cell voltages, max charge/discharge current, stored energy, battery state.
+- **Inverter:** power, voltage, temperature.
+- **PV:** PV1/PV2 voltage, current and power, total PV power.
+- **House:** house load (PV + battery + grid).
+- **Energy totals and periods:** estimated PV and house energy totals (integrated from power) and daily, weekly, monthly and yearly counters for PV, house, grid import/export and battery charge/discharge.
+
 Sign convention: grid power negative = export; battery power/current negative = charging.
 
-Sensors marked *experimental* (grid current, cell voltages, temperature, battery-from-grid energy,
-max currents, L1 power, house load) are **disabled by default**: the register map was decoded by
-observation and cross-checked with the cloud values (SOC, grid and battery energy totals match),
-but those still need confirmation. Please compare with the app and report mismatches.
+PV and house energy have no readable register on the inverter, so they are integrated from power every poll. Totals and period starts are stored and survive restarts; periods start counting at the first run. In the integration options you can add an offset to the PV and house totals (for example to match the totals of another source) and set the battery usable capacity (default 9.576 kWh) used for the stored energy sensor.
+
+Battery control (charge programme, export limit) is not available locally: keep the cloud integration for that.
 
 ## Troubleshooting
 

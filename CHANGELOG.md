@@ -1,5 +1,21 @@
 # Changelog
 
+## 0.2.0 – 2026-11-22
+
+### English
+- New: estimated PV energy and house energy totals (integrated from power), plus daily, weekly, monthly and yearly counters for PV, house, grid import/export and battery charge/discharge.
+- New: battery stored energy (kWh), battery state and grid state (charging/discharging/idle, importing/exporting/idle).
+- New options: PV and house energy offsets (to align totals with another source such as the cloud) and battery usable capacity.
+- All sensors are now enabled by default and no longer labelled experimental: values were verified against the cloud integration.
+- Totals and period baselines are stored and survive restarts. Periods start counting from the first run.
+
+### Italiano
+- Novità: totali stimati di energia fotovoltaica e consumata (integrati dalla potenza), più contatori giornalieri, settimanali, mensili e annuali per FV, casa, prelievo/immissione in rete e carica/scarica batteria.
+- Novità: energia immagazzinata in batteria (kWh), stato batteria e stato rete (carica/scarica/inattiva, prelievo/immissione/inattiva).
+- Nuove opzioni: offset energia FV e casa (per allineare i totali a un'altra fonte, come il cloud) e capacità utilizzabile della batteria.
+- Tutti i sensori sono ora abilitati di default e non più indicati come sperimentali: i valori sono stati verificati con l'integrazione cloud.
+- Totali e punti di partenza dei periodi vengono salvati e restano dopo i riavvii. I periodi iniziano a contare dalla prima esecuzione.
+
 ## 0.1.2 – 2026-11-22
 
 ### English

@@ -23,8 +23,12 @@
       "init": {
         "title": "Options",
         "data": {
-          "scan_interval": "Polling interval (seconds)"
-        }
+          "scan_interval": "Polling interval (seconds)",
+          "pv_energy_offset": "PV energy offset (kWh)",
+          "house_energy_offset": "House energy offset (kWh)",
+          "battery_usable_capacity": "Battery usable capacity (kWh)"
+        },
+        "description": "Offsets are added to the integrated PV and house energy totals, e.g. to match the totals of another source. Period counters are not affected."
       }
     }
   },
@@ -40,7 +44,7 @@
         "name": "Grid voltage"
       },
       "grid_current": {
-        "name": "Grid current (experimental)"
+        "name": "Grid current"
       },
       "grid_frequency": {
         "name": "Grid frequency"
@@ -67,31 +71,31 @@
         "name": "Battery energy discharged"
       },
       "battery_energy_charged_from_grid": {
-        "name": "Battery energy charged from grid (experimental)"
+        "name": "Battery energy charged from grid"
       },
       "battery_cell_voltage_1": {
-        "name": "Battery cell voltage 1 (experimental)"
+        "name": "Battery cell voltage 1"
       },
       "battery_cell_voltage_2": {
-        "name": "Battery cell voltage 2 (experimental)"
+        "name": "Battery cell voltage 2"
       },
       "battery_max_charge_current": {
-        "name": "Battery max charge current (experimental)"
+        "name": "Battery max charge current"
       },
       "battery_max_discharge_current": {
-        "name": "Battery max discharge current (experimental)"
+        "name": "Battery max discharge current"
       },
       "inverter_voltage": {
         "name": "Inverter AC voltage"
       },
       "inverter_power_l1": {
-        "name": "Inverter power L1 (experimental)"
+        "name": "Inverter power L1"
       },
       "inverter_power": {
         "name": "Inverter power"
       },
       "inverter_temperature": {
-        "name": "Inverter temperature (experimental)"
+        "name": "Inverter temperature"
       },
       "pv1_voltage": {
         "name": "PV1 voltage"
@@ -115,7 +119,104 @@
         "name": "PV power"
       },
       "house_load": {
-        "name": "House load (experimental)"
+        "name": "House load"
+      },
+      "pv_energy": {
+        "name": "PV energy (estimated)"
+      },
+      "house_energy": {
+        "name": "House energy (estimated)"
+      },
+      "pv_energy_daily": {
+        "name": "PV energy daily"
+      },
+      "pv_energy_weekly": {
+        "name": "PV energy weekly"
+      },
+      "pv_energy_monthly": {
+        "name": "PV energy monthly"
+      },
+      "pv_energy_yearly": {
+        "name": "PV energy yearly"
+      },
+      "house_energy_daily": {
+        "name": "House energy daily"
+      },
+      "house_energy_weekly": {
+        "name": "House energy weekly"
+      },
+      "house_energy_monthly": {
+        "name": "House energy monthly"
+      },
+      "house_energy_yearly": {
+        "name": "House energy yearly"
+      },
+      "grid_energy_export_daily": {
+        "name": "Grid energy exported daily"
+      },
+      "grid_energy_export_weekly": {
+        "name": "Grid energy exported weekly"
+      },
+      "grid_energy_export_monthly": {
+        "name": "Grid energy exported monthly"
+      },
+      "grid_energy_export_yearly": {
+        "name": "Grid energy exported yearly"
+      },
+      "grid_energy_import_daily": {
+        "name": "Grid energy imported daily"
+      },
+      "grid_energy_import_weekly": {
+        "name": "Grid energy imported weekly"
+      },
+      "grid_energy_import_monthly": {
+        "name": "Grid energy imported monthly"
+      },
+      "grid_energy_import_yearly": {
+        "name": "Grid energy imported yearly"
+      },
+      "battery_energy_charged_daily": {
+        "name": "Battery energy charged daily"
+      },
+      "battery_energy_charged_weekly": {
+        "name": "Battery energy charged weekly"
+      },
+      "battery_energy_charged_monthly": {
+        "name": "Battery energy charged monthly"
+      },
+      "battery_energy_charged_yearly": {
+        "name": "Battery energy charged yearly"
+      },
+      "battery_energy_discharged_daily": {
+        "name": "Battery energy discharged daily"
+      },
+      "battery_energy_discharged_weekly": {
+        "name": "Battery energy discharged weekly"
+      },
+      "battery_energy_discharged_monthly": {
+        "name": "Battery energy discharged monthly"
+      },
+      "battery_energy_discharged_yearly": {
+        "name": "Battery energy discharged yearly"
+      },
+      "battery_state": {
+        "name": "Battery state",
+        "state": {
+          "charging": "Charging",
+          "discharging": "Discharging",
+          "idle": "Idle"
+        }
+      },
+      "grid_state": {
+        "name": "Grid state",
+        "state": {
+          "importing": "Importing",
+          "exporting": "Exporting",
+          "idle": "Idle"
+        }
+      },
+      "battery_stored_energy": {
+        "name": "Battery stored energy"
       }
     }
   }
