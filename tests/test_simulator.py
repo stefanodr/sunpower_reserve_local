@@ -82,7 +82,7 @@ async def main():
         "battery_voltage": 100.1, "battery_current": -13.1,
         "grid_frequency": 49.97, "inverter_power": 391, "inverter_voltage": 234.0,
         "pv1_voltage": 148.0, "pv2_voltage": 218.0, "inverter_temperature": 54.0,
-        "house_load": 379,
+        "house_load": 509,
     }
     for key, want in expected.items():
         assert abs(d[key] - want) < 1e-6, (key, d[key], want)

@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.1.2 – 2026-11-22
+
+### English
+- Fixed the "House load" sensor: it is now PV power + battery power + grid power (previously it used the inverter power register, which does not represent AC output). Verified against the cloud "instant consumption" value.
+
+### Italiano
+- Corretto il sensore "Consumo casa": ora è potenza FV + potenza batteria + potenza di rete (prima usava il registro della potenza inverter, che non rappresenta l'uscita AC). Verificato con il valore "consumo istantaneo" del cloud.
+
 ## 0.1.1 – 2026-11-21
 
 ### English

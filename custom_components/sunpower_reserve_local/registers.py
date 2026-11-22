@@ -89,7 +89,11 @@ def decode(regs: dict[int, int]) -> dict[str, float | None]:
     data = {reg.key: _decode(reg, regs) for reg in REGISTERS}
     p1, p2 = data["pv1_power"], data["pv2_power"]
     data["pv_power"] = None if p1 is None or p2 is None else p1 + p2
-    inv, grid = data["inverter_power"], data["grid_power"]
-    # grid_power: negative = export, positive = import
-    data["house_load"] = None if inv is None or grid is None else inv + grid
+    # house load = PV + battery discharge + grid import
+    # (battery_power: negative = charging; grid_power: negative = export)
+    batt, grid = data["battery_power"], data["grid_power"]
+    data["house_load"] = (
+        None if p1 is None or p2 is None or batt is None or grid is None
+        else p1 + p2 + batt + grid
+    )
     return data
