@@ -39,6 +39,7 @@ poi inserisci l'IP dell'inverter (porta 502, unità 85). L'intervallo di lettura
 - **Batteria:** carica (SOC), potenza, tensione, corrente, energia caricata/scaricata, energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, stato batteria.
 - **Inverter:** potenza, tensione, temperatura.
 - **Fotovoltaico:** tensione, corrente e potenza di PV1/PV2, potenza FV totale.
+- **Diagnostica:** versioni firmware di inverter, BMS ed EMS, limite di esportazione, potenza FV installata, potenza nominale inverter (lette all'avvio e poi ogni ora); il dispositivo mostra anche il numero di serie.
 - **Casa:** consumo casa (FV + batteria + rete).
 - **Totali energia e periodi:** totali stimati di energia FV e consumata (integrati dalla potenza) e contatori giornalieri, settimanali, mensili e annuali per FV, casa, prelievo/immissione in rete e carica/scarica batteria.
 

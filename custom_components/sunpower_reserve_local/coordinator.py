@@ -25,7 +25,9 @@ from .const import (
 )
 from .energy import EnergyAccumulator
 from .modbus import ModbusError, ReadOnlyModbusClient
-from .registers import BLOCK_SIZE, BLOCKS, decode
+from .registers import BLOCK_SIZE, BLOCKS, STATIC_ADDRESSES, STATIC_BLOCKS, decode
+
+STATIC_REFRESH_SECONDS = 3600
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,6 +46,8 @@ class SunPowerReserveCoordinator(DataUpdateCoordinator[dict[str, float | str | N
         )
         self._store: Store = Store(hass, 1, f"{DOMAIN}.{entry.entry_id}")
         self._entry = entry
+        self._static: dict[int, int] = {}
+        self._static_ts: float | None = None
         self._energy = EnergyAccumulator(max_gap=3 * interval)
         self._configure_energy()
         self.client = ReadOnlyModbusClient(
@@ -72,14 +76,23 @@ class SunPowerReserveCoordinator(DataUpdateCoordinator[dict[str, float | str | N
 
     async def _async_update_data(self) -> dict[str, float | str | None]:
         try:
-            registers, refused = await self.client.read_blocks(BLOCKS, BLOCK_SIZE)
+            now_mono = time.monotonic()
+            read_static = (
+                self._static_ts is None
+                or now_mono - self._static_ts > STATIC_REFRESH_SECONDS
+            )
+            blocks = BLOCKS + STATIC_BLOCKS if read_static else BLOCKS
+            registers, refused = await self.client.read_blocks(blocks, BLOCK_SIZE)
         except ModbusError as err:
             raise UpdateFailed(f"Inverter not reachable: {err}") from err
         if refused:
             _LOGGER.debug("Blocks refused by the inverter: %s", [hex(a) for a in refused])
         if not registers:
             raise UpdateFailed("No data received from the inverter")
-        data = decode(registers)
+        if read_static:
+            self._static_ts = now_mono
+            self._static.update({a: v for a, v in registers.items() if a in STATIC_ADDRESSES})
+        data = decode({**self._static, **registers})
         self._energy.update(data, dt_util.now(), time.monotonic())
         self._store.async_delay_save(self._energy.to_dict, 60)
         return data

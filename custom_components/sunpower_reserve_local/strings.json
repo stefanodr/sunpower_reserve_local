@@ -217,6 +217,24 @@
       },
       "battery_stored_energy": {
         "name": "Battery stored energy"
+      },
+      "export_limit": {
+        "name": "Export limit"
+      },
+      "pv_installed_power": {
+        "name": "Installed PV power"
+      },
+      "inverter_rated_power": {
+        "name": "Inverter rated power"
+      },
+      "inverter_firmware": {
+        "name": "Inverter firmware"
+      },
+      "bms_firmware": {
+        "name": "BMS firmware"
+      },
+      "ems_firmware": {
+        "name": "EMS firmware"
       }
     }
   }

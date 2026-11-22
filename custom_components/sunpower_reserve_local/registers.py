@@ -11,6 +11,11 @@ BLOCKS = [
     0x0400, 0x0408, 0x0418, 0x0420, 0x0430,
 ]  # fmt: skip
 
+# Static information (versions, serial, configuration): read at start and then
+# only once an hour.
+STATIC_BLOCKS = [0x0640, 0x0648, 0x0650, 0x0748, 0x0800, 0x08A0]
+STATIC_ADDRESSES = {a for start in STATIC_BLOCKS for a in range(start, start + BLOCK_SIZE)}
+
 
 @dataclass(frozen=True)
 class Reg:
@@ -23,6 +28,7 @@ class Reg:
     state_class: str | None
     enabled: bool = True
     precision: int | None = None
+    diagnostic: bool = False
 
 
 M, T = "measurement", "total_increasing"
@@ -59,7 +65,39 @@ REGISTERS: list[Reg] = [
     Reg("pv2_voltage", 0x0421, "u16", 0.1, "V", "voltage", M, True, 1),
     Reg("pv2_current", 0x0422, "u16", 0.1, "A", "current", M, True, 1),
     Reg("pv2_power", 0x0423, "s32", 1, "W", "power", M, True, 0),
+    # Static configuration (diagnostic)
+    Reg("export_limit", 0x0800, "u16", 1, "%", None, None, True, 0, True),
+    Reg("pv_installed_power", 0x0802, "u16", 0.001, "kW", "power", None, True, 1, True),
+    Reg("inverter_rated_power", 0x08A3, "u16", 0.001, "kW", "power", None, True, 1, True),
 ]
+
+# Text sensors (diagnostic): key
+TEXT_SENSORS = ["inverter_firmware", "bms_firmware", "ems_firmware"]
+
+
+def _ascii(regs: dict[int, int], start: int, count: int) -> str | None:
+    """Text stored two characters per register (high byte first)."""
+    words = [regs.get(start + i) for i in range(count)]
+    if any(w is None for w in words):
+        return None
+    raw = b"".join(w.to_bytes(2, "big") for w in words)
+    text = raw.split(b"\0", 1)[0].decode("ascii", errors="ignore").strip()
+    return text or None
+
+
+def decode_static(regs: dict[int, int]) -> dict[str, str | None]:
+    """Firmware versions and serial number."""
+    bms = regs.get(0x0115)
+    ems = [regs.get(a) for a in (0x074B, 0x074C, 0x074D, 0x074F)]
+    ems_text = None
+    if None not in ems and ems[3] >> 8:
+        ems_text = f"V{ems[0]}.{ems[1]}.{ems[2]}{chr(ems[3] >> 8)}"
+    return {
+        "inverter_firmware": _ascii(regs, 0x0640, 5),
+        "bms_firmware": f"V{bms / 100:.2f}" if bms else None,
+        "ems_firmware": ems_text,
+        "serial_number": _ascii(regs, 0x064A, 8),
+    }
 
 # Derived sensors: key -> (unit, device_class, state_class, enabled, precision)
 DERIVED = {
@@ -108,6 +146,7 @@ def decode(regs: dict[int, int]) -> dict[str, float | str | None]:
         None if p1 is None or p2 is None or batt is None or grid is None
         else p1 + p2 + batt + grid
     )
+    data.update(decode_static(regs))
     # state sensors (battery_power: negative = charging; grid_power: negative = export)
     data["battery_state"] = (
         None if batt is None

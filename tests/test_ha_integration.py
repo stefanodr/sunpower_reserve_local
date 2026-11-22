@@ -5,6 +5,7 @@ import asyncio
 import struct
 
 import pytest
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
@@ -19,6 +20,25 @@ ROWS = {
     0x0430: "0 0 0 0 0 540 0 0",
 }
 MEM = {b + i: int(v) for b, r in ROWS.items() for i, v in enumerate(r.split())}
+
+def _words(text, count):
+    raw = text.encode().ljust(count * 2, b"\0")
+    return [int.from_bytes(raw[i:i + 2], "big") for i in range(0, count * 2, 2)]
+
+
+def _add_static(mem):
+    for start in (0x0640, 0x0648, 0x0650, 0x0748, 0x0800, 0x08A0):
+        for i in range(8):
+            mem.setdefault(start + i, 0)
+    for i, w in enumerate(_words("01000.165", 5)):
+        mem[0x0640 + i] = w
+    for i, w in enumerate(_words("SOD000000000000", 8)):
+        mem[0x064A + i] = w
+    mem.update({0x074B: 0, 0x074C: 11, 0x074D: 50, 0x074E: 0, 0x074F: 17920})
+    mem.update({0x0800: 100, 0x0802: 4500, 0x08A3: 4600})
+
+
+_add_static(MEM)
 FCS = []
 
 
@@ -84,6 +104,13 @@ async def test_setup_and_values(hass, inverter):
         _, reg_entry = _state(hass, entry, key)
         assert reg_entry.disabled_by is None, key
     assert float(_state(hass, entry, "battery_stored_energy")[0].state) == 6.7
+    assert _state(hass, entry, "inverter_firmware")[0].state == "01000.165"
+    assert _state(hass, entry, "bms_firmware")[0].state == "V1.55"
+    assert _state(hass, entry, "ems_firmware")[0].state == "V0.11.50F"
+    assert float(_state(hass, entry, "export_limit")[0].state) == 100
+    assert float(_state(hass, entry, "pv_installed_power")[0].state) == 4.5
+    dev = dr.async_get(hass).async_get_device(identifiers={(DOMAIN, entry.entry_id)})
+    assert dev.sw_version == "01000.165" and dev.serial_number == "SOD000000000000"
     assert set(FCS) == {3}
 
     assert await hass.config_entries.async_unload(entry.entry_id)

@@ -38,6 +38,24 @@ for base, row in DUMP.items():
     for i, v in enumerate(map(int, row.split())):
         MEM[base + i] = v
 
+def _words(text, count):
+    raw = text.encode().ljust(count * 2, b"\0")
+    return [int.from_bytes(raw[i:i + 2], "big") for i in range(0, count * 2, 2)]
+
+
+def _add_static(mem):
+    for start in (0x0640, 0x0648, 0x0650, 0x0748, 0x0800, 0x08A0):
+        for i in range(8):
+            mem.setdefault(start + i, 0)
+    for i, w in enumerate(_words("01000.165", 5)):
+        mem[0x0640 + i] = w
+    for i, w in enumerate(_words("SOD000000000000", 8)):
+        mem[0x064A + i] = w
+    mem.update({0x074B: 0, 0x074C: 11, 0x074D: 50, 0x074E: 0, 0x074F: 17920})
+    mem.update({0x0800: 100, 0x0802: 4500, 0x08A3: 4600})
+
+
+_add_static(MEM)
 seen_fc = []
 EXCEPTION_BLOCKS = set()
 
@@ -71,7 +89,7 @@ async def main():
 
     assert await client.read_once(0x0102, 1) == [700]
 
-    regs, refused = await client.read_blocks(registers.BLOCKS, registers.BLOCK_SIZE)
+    regs, refused = await client.read_blocks(registers.BLOCKS + registers.STATIC_BLOCKS, registers.BLOCK_SIZE)
     assert not refused, refused
     d = registers.decode(regs)
     expected = {
@@ -82,16 +100,20 @@ async def main():
         "battery_voltage": 100.1, "battery_current": -13.1,
         "grid_frequency": 49.97, "inverter_power": 391, "inverter_voltage": 234.0,
         "pv1_voltage": 148.0, "pv2_voltage": 218.0, "inverter_temperature": 54.0,
-        "house_load": 509,
+        "house_load": 509, "export_limit": 100, "pv_installed_power": 4.5,
+        "inverter_rated_power": 4.6,
     }
     for key, want in expected.items():
         assert abs(d[key] - want) < 1e-6, (key, d[key], want)
     assert d["battery_state"] == "charging" and d["grid_state"] == "idle", (d["battery_state"], d["grid_state"])
+    assert d["inverter_firmware"] == "01000.165", d["inverter_firmware"]
+    assert d["bms_firmware"] == "V1.55" and d["ems_firmware"] == "V0.11.50F"
+    assert d["serial_number"] == "SOD000000000000"
     print("decoded values OK:", len(expected), "checked,", len(d), "total")
 
     # a block refused with a Modbus exception -> its values are None, others fine
     EXCEPTION_BLOCKS.add(0x0430)
-    regs, refused = await client.read_blocks(registers.BLOCKS, registers.BLOCK_SIZE)
+    regs, refused = await client.read_blocks(registers.BLOCKS + registers.STATIC_BLOCKS, registers.BLOCK_SIZE)
     assert refused == [0x0430]
     assert registers.decode(regs)["inverter_temperature"] is None
     assert registers.decode(regs)["battery_soc"] == 70.0

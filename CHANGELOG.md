@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.3.0 – 2026-11-22
+
+### English
+- New diagnostic sensors read from the inverter: inverter, BMS and EMS firmware versions, export limit, installed PV power and inverter rated power (same values as the cloud integration).
+- The device now shows the serial number and the inverter firmware version.
+- Static information is read at start-up and then once an hour, so it adds no load to normal polling.
+
+### Italiano
+- Nuovi sensori diagnostici letti dall'inverter: versioni firmware di inverter, BMS ed EMS, limite di esportazione, potenza FV installata e potenza nominale dell'inverter (stessi valori dell'integrazione cloud).
+- Il dispositivo ora mostra il numero di serie e la versione firmware dell'inverter.
+- Le informazioni statiche vengono lette all'avvio e poi una volta l'ora, quindi non appesantiscono la lettura normale.
+
 ## 0.2.0 – 2026-11-22
 
 ### English
