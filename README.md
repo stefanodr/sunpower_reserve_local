@@ -4,14 +4,20 @@
 
 Read-only, **fully local** Home Assistant integration for the SunPower Reserve
 inverter/battery (an AlphaESS white label). It polls the inverter over
-**Modbus TCP** on your LAN: no cloud, no account, no changes to dongle, DNS or router.
+**Modbus TCP** on your LAN: no cloud, no account, and no changes to the dongle, DNS or router.
 
-It complements the cloud integration `sunpower_maxeon` (which you still need for
-battery control): this one only **reads**, it never writes. Only Modbus function code 3 is used.
+## Read-only by design
+
+The integration only ever sends Modbus **function code 3 (read holding registers)**. It has no code path
+that writes to the inverter, so it cannot change settings or affect the warranty.
+
+It complements the cloud integration [`sunpower_maxeon`](https://github.com/geims12/sunpower_maxeon),
+which you still need for battery control (charge programme, export limit). The two can run side by side
+because they talk to different endpoints.
 
 ## Requirements
 
-- The inverter's **LAN port** connected to your network (cable to router / powerline). It gets its own IP (an address from your own network, e.g. `<inverter-ip>`), different from the Wi-Fi dongle. Find it in your router's device list (the LAN port usually appears as a "WIZnet" device).
+- The inverter's **LAN port** connected to your network (cable to router / powerline). It gets its own IP address (an address from your own network, shown below as `<inverter-ip>`), different from the Wi-Fi dongle. Find it in your router's device list: the LAN port usually appears as a "WIZnet" device.
 - Modbus TCP on port `502`, unit ID `85` (defaults).
 - The inverter accepts **one Modbus TCP connection at a time**: don't run other Modbus clients against it.
 
@@ -31,29 +37,46 @@ Copy `custom_components/sunpower_reserve_local` into your `config/custom_compone
 ## Setup
 
 Settings → Devices & services → Add integration → **SunPower Reserve Local**, then enter
-the inverter's IP (port 502, unit 85). Polling interval (default 15 s, min 10 s) is in the integration options.
+the inverter's IP (`<inverter-ip>`, port 502, unit 85).
+
+### Options
+
+| Option | Default | Meaning |
+|---|---|---|
+| Polling interval | 15 s (min 10 s) | How often the inverter is read |
+| PV energy offset (kWh) | 0 | Added to the estimated PV energy total, e.g. to match another source |
+| House energy offset (kWh) | 0 | Added to the estimated house energy total |
+| Battery usable capacity (kWh) | 9.576 | Used for stored energy and battery time estimates |
+
+Offsets never affect the daily/weekly/monthly/yearly counters.
 
 ## Sensors
 
-- **Grid:** import/export energy, power, voltage, frequency, current, grid state.
-- **Battery:** charge (SOC), power, voltage, current, charged/discharged energy, energy charged from grid, cell voltages, max charge/discharge current, stored energy, battery state.
-- **Inverter:** power, voltage, temperature.
-- **PV:** PV1/PV2 voltage, current and power, total PV power.
-- **Dashboard helpers:** battery charge/discharge power, grid import/export power (positive values), self-consumption and self-sufficiency of the day, battery time to empty / to full.
-- **Diagnostics:** inverter, BMS and EMS firmware versions, export limit, installed PV power, inverter rated power (read at start-up and then hourly); the device also shows the serial number.
-- **House:** house load (PV + battery + grid).
-- **Energy totals and periods:** estimated PV and house energy totals (integrated from power) and daily, weekly, monthly and yearly counters for PV, house, grid import/export and battery charge/discharge.
+| Group | What you get |
+|---|---|
+| **Grid** | Import/export energy (totals), power, voltage, frequency, current, grid state |
+| **Battery** | Charge (SOC), power, voltage, current, charged/discharged energy (totals), energy charged from grid, cell voltages, max charge/discharge current, stored energy, battery state |
+| **Inverter** | Power, L1 power, AC voltage, temperature |
+| **PV** | PV1 and PV2 voltage, current and power, total PV power |
+| **House** | House load (PV + battery + grid) |
+| **Energy totals and periods** | Estimated PV and house energy totals, plus daily, weekly, monthly and yearly counters for PV, house, grid import/export and battery charge/discharge |
+| **Dashboard helpers** | Battery charge/discharge power and grid import/export power as separate positive values, self-consumption and self-sufficiency of the day, battery time to empty / to full |
+| **Diagnostics** | Inverter, BMS and EMS firmware versions, export limit, installed PV power, inverter rated power (read at start-up and then hourly); the device also shows the serial number |
 
-Sign convention: grid power negative = export; battery power/current negative = charging.
+Sign convention: grid power negative = export; battery power and current negative = charging.
 
-PV and house energy have no readable register on the inverter, so they are integrated from power every poll. Totals and period starts are stored and survive restarts; periods start counting at the first run. In the integration options you can add an offset to the PV and house totals (for example to match the totals of another source) and set the battery usable capacity (default 9.576 kWh) used for the stored energy sensor.
+### Good to know
 
-Battery control (charge programme, export limit) is not available locally: keep the cloud integration for that.
+- **PV and house energy are estimates.** The inverter has no readable register for them, so they are integrated from power at every poll. Grid and battery energy totals come straight from the inverter and match the cloud values.
+- **Periods start counting at the first run.** Totals and period starts are stored and survive restarts, but "today", "this week", "this month" and "this year" are partial right after installation.
+- **Some sensors are empty on purpose.** *Battery time to empty* only has a value while the battery discharges (above 20 W), and *time to full* only while it charges. Otherwise they are unknown.
+- **Battery control is not available locally.** Use the cloud integration for the charge programme and the export limit.
 
 ## Troubleshooting
 
-- *Cannot read from the inverter*: check IP, that the LAN cable is connected, and that no other Modbus client is attached.
-- Values frozen / unavailable: the inverter allows a single connection; stop other clients.
+- *Cannot read from the inverter*: check the IP, that the LAN cable is connected, and that no other Modbus client is attached.
+- Values frozen or unavailable: the inverter allows a single connection; stop other Modbus clients.
+- Some values differ slightly from the cloud: the cloud updates much less often than this integration.
 
 ## Disclaimer
-Unofficial, not affiliated with SunPower/Maxeon/AlphaESS. Use at your own risk.
+Unofficial, not affiliated with SunPower, Maxeon or AlphaESS. Use at your own risk.

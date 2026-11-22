@@ -4,14 +4,20 @@
 
 Integrazione Home Assistant **completamente locale** e in **sola lettura** per
 inverter/batteria SunPower Reserve (rebrand AlphaESS). Legge l'inverter via
-**Modbus TCP** sulla tua LAN: niente cloud, niente account, nessuna modifica a dongle, DNS o router.
+**Modbus TCP** sulla tua LAN: niente cloud, niente account e nessuna modifica a dongle, DNS o router.
 
-Affianca l'integrazione cloud `sunpower_maxeon` (che serve ancora per il controllo della batteria):
-questa **legge soltanto**, non scrive mai. Usa solo la funzione Modbus 3.
+## Sola lettura per progetto
+
+L'integrazione invia soltanto la **funzione Modbus 3 (lettura dei registri)**. Non esiste nessun percorso
+di codice che scriva sull'inverter, quindi non può modificare impostazioni né influire sulla garanzia.
+
+Affianca l'integrazione cloud [`sunpower_maxeon`](https://github.com/geims12/sunpower_maxeon),
+che serve ancora per il controllo della batteria (programma di carica, limite di esportazione). Le due possono
+funzionare insieme perché parlano con punti diversi.
 
 ## Requisiti
 
-- **Porta LAN dell'inverter** collegata alla rete (cavo al router / powerline). Ha un IP proprio (un indirizzo della tua rete, es. `<IP-inverter>`), diverso dal dongle Wi-Fi. Lo trovi nell'elenco dispositivi del router (la porta LAN di solito compare come dispositivo "WIZnet").
+- **Porta LAN dell'inverter** collegata alla rete (cavo al router / powerline). Ha un indirizzo IP proprio (un indirizzo della tua rete, indicato sotto come `<IP-inverter>`), diverso dal dongle Wi-Fi. Lo trovi nell'elenco dispositivi del router: la porta LAN di solito compare come dispositivo "WIZnet".
 - Modbus TCP porta `502`, ID unità `85` (valori predefiniti).
 - L'inverter accetta **una sola connessione Modbus TCP alla volta**: non usare altri client Modbus.
 
@@ -31,29 +37,46 @@ Copia `custom_components/sunpower_reserve_local` in `config/custom_components/` 
 ## Configurazione
 
 Impostazioni → Dispositivi e servizi → Aggiungi integrazione → **SunPower Reserve Local**,
-poi inserisci l'IP dell'inverter (porta 502, unità 85). L'intervallo di lettura (predefinito 15 s, minimo 10 s) è nelle opzioni.
+poi inserisci l'IP dell'inverter (`<IP-inverter>`, porta 502, unità 85).
+
+### Opzioni
+
+| Opzione | Predefinito | Significato |
+|---|---|---|
+| Intervallo di lettura | 15 s (min 10 s) | Ogni quanto viene letto l'inverter |
+| Offset energia FV (kWh) | 0 | Si somma al totale stimato dell'energia FV, ad esempio per allinearlo a un'altra fonte |
+| Offset energia casa (kWh) | 0 | Si somma al totale stimato dell'energia consumata |
+| Capacità utilizzabile batteria (kWh) | 9,576 | Usata per l'energia immagazzinata e per le stime di tempo della batteria |
+
+Gli offset non influiscono sui contatori giornalieri, settimanali, mensili e annuali.
 
 ## Sensori
 
-- **Rete:** energia prelevata/immessa, potenza, tensione, frequenza, corrente, stato rete.
-- **Batteria:** carica (SOC), potenza, tensione, corrente, energia caricata/scaricata, energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, stato batteria.
-- **Inverter:** potenza, tensione, temperatura.
-- **Fotovoltaico:** tensione, corrente e potenza di PV1/PV2, potenza FV totale.
-- **Per le plance:** potenza di carica/scarica batteria, potenza prelevata/immessa in rete (valori positivi), autoconsumo e autosufficienza del giorno, autonomia batteria e tempo alla carica completa.
-- **Diagnostica:** versioni firmware di inverter, BMS ed EMS, limite di esportazione, potenza FV installata, potenza nominale inverter (lette all'avvio e poi ogni ora); il dispositivo mostra anche il numero di serie.
-- **Casa:** consumo casa (FV + batteria + rete).
-- **Totali energia e periodi:** totali stimati di energia FV e consumata (integrati dalla potenza) e contatori giornalieri, settimanali, mensili e annuali per FV, casa, prelievo/immissione in rete e carica/scarica batteria.
+| Gruppo | Cosa ottieni |
+|---|---|
+| **Rete** | Energia prelevata/immessa (totali), potenza, tensione, frequenza, corrente, stato rete |
+| **Batteria** | Carica (SOC), potenza, tensione, corrente, energia caricata/scaricata (totali), energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, stato batteria |
+| **Inverter** | Potenza, potenza L1, tensione AC, temperatura |
+| **Fotovoltaico** | Tensione, corrente e potenza di PV1 e PV2, potenza FV totale |
+| **Casa** | Consumo casa (FV + batteria + rete) |
+| **Totali energia e periodi** | Totali stimati di energia FV e consumata, più contatori giornalieri, settimanali, mensili e annuali per FV, casa, prelievo/immissione in rete e carica/scarica batteria |
+| **Per le plance** | Potenza di carica/scarica batteria e potenza prelevata/immessa in rete come valori positivi separati, autoconsumo e autosufficienza del giorno, autonomia batteria e tempo alla carica completa |
+| **Diagnostica** | Versioni firmware di inverter, BMS ed EMS, limite di esportazione, potenza FV installata, potenza nominale inverter (lette all'avvio e poi ogni ora); il dispositivo mostra anche il numero di serie |
 
-Segni: potenza di rete negativa = immissione; potenza/corrente batteria negative = carica.
+Segni: potenza di rete negativa = immissione; potenza e corrente della batteria negative = carica.
 
-L'energia FV e quella consumata non hanno un registro leggibile sull'inverter, quindi vengono integrate dalla potenza a ogni lettura. Totali e inizio dei periodi vengono salvati e restano dopo i riavvii; i periodi iniziano a contare dalla prima esecuzione. Nelle opzioni puoi aggiungere un offset ai totali FV e casa (ad esempio per allinearli a un'altra fonte) e impostare la capacità utilizzabile della batteria (predefinita 9,576 kWh) usata dal sensore di energia immagazzinata.
+### Da sapere
 
-Il controllo della batteria (programma di carica, limite di esportazione) non è disponibile in locale: per quello tieni l'integrazione cloud.
+- **Energia FV e consumata sono stime.** L'inverter non ha un registro leggibile per queste due, quindi vengono integrate dalla potenza a ogni lettura. I totali di rete e batteria arrivano direttamente dall'inverter e coincidono con quelli del cloud.
+- **I periodi iniziano a contare dalla prima esecuzione.** Totali e partenze dei periodi vengono salvati e restano dopo i riavvii, ma "oggi", "settimana", "mese" e "anno" sono parziali subito dopo l'installazione.
+- **Alcuni sensori sono vuoti di proposito.** *Autonomia batteria* ha un valore solo mentre la batteria si scarica (sopra 20 W), e *tempo alla carica completa* solo mentre si carica. Altrimenti sono sconosciuti.
+- **Il controllo della batteria non è disponibile in locale.** Per il programma di carica e il limite di esportazione usa l'integrazione cloud.
 
 ## Risoluzione problemi
 
 - *Impossibile leggere dall'inverter*: controlla IP, cavo LAN collegato e che nessun altro client Modbus sia connesso.
-- Valori fermi / non disponibili: l'inverter ammette una sola connessione; ferma gli altri client.
+- Valori fermi o non disponibili: l'inverter ammette una sola connessione; ferma gli altri client Modbus.
+- Alcuni valori differiscono di poco dal cloud: il cloud si aggiorna molto meno spesso di questa integrazione.
 
 ## Avvertenza
-Non ufficiale, non affiliata a SunPower/Maxeon/AlphaESS. Uso a proprio rischio.
+Non ufficiale, non affiliata a SunPower, Maxeon o AlphaESS. Uso a proprio rischio.
