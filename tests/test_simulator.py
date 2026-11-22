@@ -100,7 +100,8 @@ async def main():
         "battery_voltage": 100.1, "battery_current": -13.1,
         "grid_frequency": 49.97, "inverter_power": 391, "inverter_voltage": 234.0,
         "pv1_voltage": 148.0, "pv2_voltage": 218.0, "inverter_temperature": 54.0,
-        "house_load": 509, "export_limit": 100, "pv_installed_power": 4.5,
+        "house_load": 509, "battery_charge_power": 1272, "battery_discharge_power": 0,
+        "grid_import_power": 0, "grid_export_power": 12, "export_limit": 100, "pv_installed_power": 4.5,
         "inverter_rated_power": 4.6,
     }
     for key, want in expected.items():
@@ -163,6 +164,24 @@ def test_energy():
     d = dict(d0, grid_energy_export=5.0)
     acc2.update(d, datetime(2026, 11, 23, 0, 7, 0), 1010.0)
     assert d["grid_energy_export_daily"] == 0.0
+    # ratios and battery times
+    d = dict(d0, pv_energy_daily=10.0, grid_energy_export_daily=2.0)
+    acc3 = energy.EnergyAccumulator(45)
+    d = dict(d0, battery_power=-2000.0, battery_soc=50.0)
+    acc3.update(d, datetime(2026, 11, 22, 12, 0, 0), 0.0)
+    assert d["battery_time_to_full"] == round((9.576 - 4.788) / 2.0, 1) and d["battery_time_to_empty"] is None
+    d = dict(d0, battery_power=500.0, battery_soc=50.0)
+    acc3.update(d, datetime(2026, 11, 22, 12, 0, 15), 15.0)
+    assert d["battery_time_to_empty"] == round(4.788 / 0.5, 1) and d["battery_time_to_full"] is None
+    d = dict(d0, battery_power=0.0, battery_soc=50.0)
+    acc3.update(d, datetime(2026, 11, 22, 12, 0, 30), 30.0)
+    assert d["battery_time_to_empty"] is None and d["battery_time_to_full"] is None
+    # self-consumption / self-sufficiency: PV 0.03 kWh (0.01 exported), house 0.015 kWh (0.01 imported)
+    acc4 = energy.EnergyAccumulator(45)
+    acc4.update(dict(d0), datetime(2026, 11, 22, 12, 0, 0), 0.0)
+    d = dict(d0, grid_energy_export=100.01, grid_energy_import=50.01)
+    acc4.update(d, datetime(2026, 11, 22, 12, 0, 30), 30.0)
+    assert d["self_consumption_daily"] == 67 and d["self_sufficiency_daily"] == 33, d
     # negative power ignored
     d = dict(d0, pv_power=-50.0)
     acc2.update(d, datetime(2026, 11, 23, 0, 8, 0), 1020.0)

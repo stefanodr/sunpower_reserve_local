@@ -39,6 +39,7 @@ the inverter's IP (port 502, unit 85). Polling interval (default 15 s, min 10 s)
 - **Battery:** charge (SOC), power, voltage, current, charged/discharged energy, energy charged from grid, cell voltages, max charge/discharge current, stored energy, battery state.
 - **Inverter:** power, voltage, temperature.
 - **PV:** PV1/PV2 voltage, current and power, total PV power.
+- **Dashboard helpers:** battery charge/discharge power, grid import/export power (positive values), self-consumption and self-sufficiency of the day, battery time to empty / to full.
 - **Diagnostics:** inverter, BMS and EMS firmware versions, export limit, installed PV power, inverter rated power (read at start-up and then hourly); the device also shows the serial number.
 - **House:** house load (PV + battery + grid).
 - **Energy totals and periods:** estimated PV and house energy totals (integrated from power) and daily, weekly, monthly and yearly counters for PV, house, grid import/export and battery charge/discharge.

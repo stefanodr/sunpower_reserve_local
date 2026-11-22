@@ -104,6 +104,14 @@ DERIVED = {
     "pv_power": ("W", "power", M, True, 0),
     "house_load": ("W", "power", M, True, 0),
     "battery_stored_energy": ("kWh", "energy_storage", M, True, 2),  # energy.py
+    "battery_charge_power": ("W", "power", M, True, 0),
+    "battery_discharge_power": ("W", "power", M, True, 0),
+    "grid_import_power": ("W", "power", M, True, 0),
+    "grid_export_power": ("W", "power", M, True, 0),
+    "self_consumption_daily": ("%", None, M, True, 0),  # energy.py
+    "self_sufficiency_daily": ("%", None, M, True, 0),  # energy.py
+    "battery_time_to_empty": ("h", "duration", M, True, 1),  # energy.py
+    "battery_time_to_full": ("h", "duration", M, True, 1),  # energy.py
 }
 
 # Below this power (W) the battery / grid is reported as idle
@@ -146,6 +154,11 @@ def decode(regs: dict[int, int]) -> dict[str, float | str | None]:
         None if p1 is None or p2 is None or batt is None or grid is None
         else p1 + p2 + batt + grid
     )
+    # positive-only power flows (handy for cards that want separate sensors)
+    data["battery_charge_power"] = None if batt is None else max(-batt, 0)
+    data["battery_discharge_power"] = None if batt is None else max(batt, 0)
+    data["grid_import_power"] = None if grid is None else max(grid, 0)
+    data["grid_export_power"] = None if grid is None else max(-grid, 0)
     data.update(decode_static(regs))
     # state sensors (battery_power: negative = charging; grid_power: negative = export)
     data["battery_state"] = (

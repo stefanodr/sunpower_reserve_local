@@ -235,6 +235,30 @@
       },
       "ems_firmware": {
         "name": "EMS firmware"
+      },
+      "battery_charge_power": {
+        "name": "Battery charge power"
+      },
+      "battery_discharge_power": {
+        "name": "Battery discharge power"
+      },
+      "grid_import_power": {
+        "name": "Grid import power"
+      },
+      "grid_export_power": {
+        "name": "Grid export power"
+      },
+      "self_consumption_daily": {
+        "name": "Self-consumption today"
+      },
+      "self_sufficiency_daily": {
+        "name": "Self-sufficiency today"
+      },
+      "battery_time_to_empty": {
+        "name": "Battery time to empty"
+      },
+      "battery_time_to_full": {
+        "name": "Battery time to full"
       }
     }
   }

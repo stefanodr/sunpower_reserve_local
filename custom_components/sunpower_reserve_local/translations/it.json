@@ -235,6 +235,30 @@
       },
       "ems_firmware": {
         "name": "Firmware EMS"
+      },
+      "battery_charge_power": {
+        "name": "Potenza di carica batteria"
+      },
+      "battery_discharge_power": {
+        "name": "Potenza di scarica batteria"
+      },
+      "grid_import_power": {
+        "name": "Potenza prelevata dalla rete"
+      },
+      "grid_export_power": {
+        "name": "Potenza immessa in rete"
+      },
+      "self_consumption_daily": {
+        "name": "Autoconsumo oggi"
+      },
+      "self_sufficiency_daily": {
+        "name": "Autosufficienza oggi"
+      },
+      "battery_time_to_empty": {
+        "name": "Autonomia batteria"
+      },
+      "battery_time_to_full": {
+        "name": "Tempo alla carica completa"
       }
     }
   }

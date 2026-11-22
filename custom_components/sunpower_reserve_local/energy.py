@@ -19,6 +19,7 @@ PERIOD_SOURCES: dict[str, tuple[str, ...]] = {
 }
 
 DEFAULT_USABLE_CAPACITY = 9.576  # kWh
+IDLE_THRESHOLD_W = 20
 
 
 def period_key(period: str, now: datetime) -> str:
@@ -106,3 +107,29 @@ class EnergyAccumulator:
                     base = {"period": pid, "start": value}
                     self.baselines[key] = base
                 data[key] = round(value - base["start"], 3)
+
+        self._ratios_and_times(data)
+
+    def _ratios_and_times(self, data: dict[str, Any]) -> None:
+        """Self-consumption / self-sufficiency of today and battery time left."""
+        pv, exp = data.get("pv_energy_daily"), data.get("grid_energy_export_daily")
+        imp, house = data.get("grid_energy_import_daily"), data.get("house_energy_daily")
+        data["self_consumption_daily"] = (
+            None
+            if pv is None or exp is None or pv <= 0
+            else round(min(max((pv - exp) / pv * 100, 0), 100))
+        )
+        data["self_sufficiency_daily"] = (
+            None
+            if imp is None or house is None or house <= 0
+            else round(min(max((1 - imp / house) * 100, 0), 100))
+        )
+        power, stored = data.get("battery_power"), data.get("battery_stored_energy")
+        empty = full = None
+        if power is not None and stored is not None:
+            if power > IDLE_THRESHOLD_W:
+                empty = round(stored / (power / 1000), 1)
+            elif power < -IDLE_THRESHOLD_W:
+                full = round(max(self.usable_capacity - stored, 0) / (-power / 1000), 1)
+        data["battery_time_to_empty"] = empty
+        data["battery_time_to_full"] = full

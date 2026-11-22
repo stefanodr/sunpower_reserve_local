@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0 – 2026-11-22
+
+### English
+- New sensors for dashboards: battery charge/discharge power and grid import/export power as separate positive values.
+- New: self-consumption and self-sufficiency of the day (%), battery time to empty and time to full (h).
+
+### Italiano
+- Nuovi sensori per le plance: potenza di carica/scarica della batteria e potenza prelevata/immessa in rete come valori separati e positivi.
+- Novità: autoconsumo e autosufficienza del giorno (%), autonomia della batteria e tempo alla carica completa (ore).
+
 ## 0.3.0 – 2026-11-22
 
 ### English
