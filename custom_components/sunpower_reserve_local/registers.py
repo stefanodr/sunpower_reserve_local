@@ -104,6 +104,7 @@ DERIVED = {
     "pv_power": ("W", "power", M, True, 0),
     "house_load": ("W", "power", M, True, 0),
     "battery_stored_energy": ("kWh", "energy_storage", M, True, 2),  # energy.py
+    "battery_usable_energy": ("kWh", "energy_storage", M, True, 2),  # energy.py
     "battery_charge_power": ("W", "power", M, True, 0),
     "battery_discharge_power": ("W", "power", M, True, 0),
     "grid_import_power": ("W", "power", M, True, 0),

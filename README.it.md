@@ -47,6 +47,7 @@ poi inserisci l'IP dell'inverter (`<IP-inverter>`, porta 502, unità 85).
 | Offset energia FV (kWh) | 0 | Si somma al totale stimato dell'energia FV, ad esempio per allinearlo a un'altra fonte |
 | Offset energia casa (kWh) | 0 | Si somma al totale stimato dell'energia consumata |
 | Capacità utilizzabile batteria (kWh) | 9,576 | Usata per l'energia immagazzinata e per le stime di tempo della batteria |
+| Riserva backup (% di carica) | 10 | Parte di carica tenuta per la linea di backup in caso di blackout: non si può scaricare, quindi è esclusa dall'energia utilizzabile e dall'autonomia |
 
 Gli offset non influiscono sui contatori giornalieri, settimanali, mensili e annuali.
 
@@ -55,7 +56,7 @@ Gli offset non influiscono sui contatori giornalieri, settimanali, mensili e ann
 | Gruppo | Cosa ottieni |
 |---|---|
 | **Rete** | Energia prelevata/immessa (totali), potenza, tensione, frequenza, corrente, stato rete |
-| **Batteria** | Carica (SOC), potenza, tensione, corrente, energia caricata/scaricata (totali), energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, stato batteria |
+| **Batteria** | Carica (SOC), potenza, tensione, corrente, energia caricata/scaricata (totali), energia caricata da rete, tensioni celle, correnti massime di carica/scarica, energia immagazzinata, energia utilizzabile (senza la riserva backup), stato batteria |
 | **Inverter** | Potenza, potenza L1, tensione AC, temperatura |
 | **Fotovoltaico** | Tensione, corrente e potenza di PV1 e PV2, potenza FV totale |
 | **Casa** | Consumo casa (FV + batteria + rete) |
@@ -69,7 +70,7 @@ Segni: potenza di rete negativa = immissione; potenza e corrente della batteria 
 
 - **Energia FV e consumata sono stime.** L'inverter non ha un registro leggibile per queste due, quindi vengono integrate dalla potenza a ogni lettura. I totali di rete e batteria arrivano direttamente dall'inverter e coincidono con quelli del cloud.
 - **I periodi iniziano a contare dalla prima esecuzione.** Totali e partenze dei periodi vengono salvati e restano dopo i riavvii, ma "oggi", "settimana", "mese" e "anno" sono parziali subito dopo l'installazione.
-- **Alcuni sensori sono vuoti di proposito.** *Autonomia batteria* ha un valore solo mentre la batteria si scarica (sopra 20 W), e *tempo alla carica completa* solo mentre si carica. Altrimenti sono sconosciuti.
+- **Alcuni sensori sono vuoti di proposito.** *Autonomia batteria* si basa sull'energia utilizzabile (la riserva backup è esclusa) e sulla potenza di scarica del momento, quindi cambia rapidamente con il carico. Ha un valore solo mentre la batteria si scarica (sopra 20 W), e *tempo alla carica completa* solo mentre si carica. Altrimenti sono sconosciuti.
 - **Il controllo della batteria non è disponibile in locale.** Per il programma di carica e il limite di esportazione usa l'integrazione cloud.
 
 ## Risoluzione problemi

@@ -47,6 +47,7 @@ the inverter's IP (`<inverter-ip>`, port 502, unit 85).
 | PV energy offset (kWh) | 0 | Added to the estimated PV energy total, e.g. to match another source |
 | House energy offset (kWh) | 0 | Added to the estimated house energy total |
 | Battery usable capacity (kWh) | 9.576 | Used for stored energy and battery time estimates |
+| Backup reserve (% of charge) | 10 | Part of the charge kept for the backup line in a blackout: it cannot be discharged, so it is excluded from the usable energy and from the time to empty |
 
 Offsets never affect the daily/weekly/monthly/yearly counters.
 
@@ -55,7 +56,7 @@ Offsets never affect the daily/weekly/monthly/yearly counters.
 | Group | What you get |
 |---|---|
 | **Grid** | Import/export energy (totals), power, voltage, frequency, current, grid state |
-| **Battery** | Charge (SOC), power, voltage, current, charged/discharged energy (totals), energy charged from grid, cell voltages, max charge/discharge current, stored energy, battery state |
+| **Battery** | Charge (SOC), power, voltage, current, charged/discharged energy (totals), energy charged from grid, cell voltages, max charge/discharge current, stored energy, usable energy (without the backup reserve), battery state |
 | **Inverter** | Power, L1 power, AC voltage, temperature |
 | **PV** | PV1 and PV2 voltage, current and power, total PV power |
 | **House** | House load (PV + battery + grid) |
@@ -69,7 +70,7 @@ Sign convention: grid power negative = export; battery power and current negativ
 
 - **PV and house energy are estimates.** The inverter has no readable register for them, so they are integrated from power at every poll. Grid and battery energy totals come straight from the inverter and match the cloud values.
 - **Periods start counting at the first run.** Totals and period starts are stored and survive restarts, but "today", "this week", "this month" and "this year" are partial right after installation.
-- **Some sensors are empty on purpose.** *Battery time to empty* only has a value while the battery discharges (above 20 W), and *time to full* only while it charges. Otherwise they are unknown.
+- **Some sensors are empty on purpose.** *Battery time to empty* is based on the usable energy (the backup reserve is excluded) and the current discharge power, so it changes quickly with the load. It only has a value while the battery discharges (above 20 W), and *time to full* only while it charges. Otherwise they are unknown.
 - **Battery control is not available locally.** Use the cloud integration for the charge programme and the export limit.
 
 ## Troubleshooting

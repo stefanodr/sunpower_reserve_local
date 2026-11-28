@@ -18,8 +18,10 @@ from .const import (
     CONF_PV_OFFSET,
     CONF_SCAN_INTERVAL,
     CONF_UNIT,
+    CONF_BACKUP_RESERVE,
     CONF_USABLE_CAPACITY,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_BACKUP_RESERVE,
     DEFAULT_USABLE_CAPACITY,
     DOMAIN,
 )
@@ -68,6 +70,9 @@ class SunPowerReserveCoordinator(DataUpdateCoordinator[dict[str, float | str | N
         }
         self._energy.usable_capacity = float(
             options.get(CONF_USABLE_CAPACITY, DEFAULT_USABLE_CAPACITY)
+        )
+        self._energy.backup_reserve = float(
+            options.get(CONF_BACKUP_RESERVE, DEFAULT_BACKUP_RESERVE)
         )
 
     async def async_save_state(self) -> None:

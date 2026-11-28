@@ -26,6 +26,7 @@
           "scan_interval": "Intervallo di lettura (secondi)",
           "pv_energy_offset": "Offset energia FV (kWh)",
           "house_energy_offset": "Offset energia casa (kWh)",
+          "battery_backup_reserve": "Riserva backup (% di carica)",
           "battery_usable_capacity": "Capacità utilizzabile batteria (kWh)"
         },
         "description": "Gli offset si sommano ai totali di energia FV e casa, ad esempio per allinearli a un'altra fonte. I contatori per periodo non cambiano."
@@ -217,6 +218,9 @@
       },
       "battery_stored_energy": {
         "name": "Energia immagazzinata in batteria"
+      },
+      "battery_usable_energy": {
+        "name": "Energia utilizzabile in batteria"
       },
       "export_limit": {
         "name": "Limite di esportazione"

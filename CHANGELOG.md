@@ -1,5 +1,19 @@
 # Changelog
 
+## 0.4.1 – 2026-11-28
+
+### English
+- New option: backup reserve (default 10 %). The battery keeps this part of the charge for the backup line in case of a blackout, so it cannot be discharged.
+- New sensor: battery usable energy (kWh), the energy that can really be discharged (charge minus the reserve).
+- Fixed: battery time to empty now uses the usable energy, so it is no longer overestimated. Time to full is unchanged.
+- The integration is still strictly read-only: it only reads registers and never writes to the inverter.
+
+### Italiano
+- Nuova opzione: riserva backup (predefinita 10 %). La batteria tiene questa parte di carica per la linea di backup in caso di blackout, quindi non può essere scaricata.
+- Nuovo sensore: energia utilizzabile in batteria (kWh), cioè l'energia che si può davvero scaricare (carica meno la riserva).
+- Corretto: l'autonomia della batteria ora usa l'energia utilizzabile, quindi non è più sovrastimata. Il tempo alla carica completa non cambia.
+- L'integrazione resta rigorosamente in sola lettura: legge solo i registri e non scrive mai sull'inverter.
+
 ## 0.4.0 – 2026-11-22
 
 ### English

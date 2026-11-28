@@ -16,8 +16,10 @@ from .const import (
     CONF_SCAN_INTERVAL,
     CONF_UNIT,
     DEFAULT_PORT,
+    CONF_BACKUP_RESERVE,
     CONF_USABLE_CAPACITY,
     DEFAULT_SCAN_INTERVAL,
+    DEFAULT_BACKUP_RESERVE,
     DEFAULT_USABLE_CAPACITY,
     DEFAULT_UNIT,
     DOMAIN,
@@ -95,6 +97,10 @@ class SunPowerReserveOptionsFlow(OptionsFlow):
                     CONF_USABLE_CAPACITY,
                     default=opts.get(CONF_USABLE_CAPACITY, DEFAULT_USABLE_CAPACITY),
                 ): vol.All(vol.Coerce(float), vol.Range(min=0.1, max=100)),
+                vol.Required(
+                    CONF_BACKUP_RESERVE,
+                    default=opts.get(CONF_BACKUP_RESERVE, DEFAULT_BACKUP_RESERVE),
+                ): vol.All(vol.Coerce(float), vol.Range(min=0, max=50)),
             }
         )
         return self.async_show_form(step_id="init", data_schema=schema)

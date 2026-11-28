@@ -14,3 +14,5 @@ CONF_PV_OFFSET = "pv_energy_offset"
 CONF_HOUSE_OFFSET = "house_energy_offset"
 CONF_USABLE_CAPACITY = "battery_usable_capacity"
 DEFAULT_USABLE_CAPACITY = 9.576
+CONF_BACKUP_RESERVE = "battery_backup_reserve"
+DEFAULT_BACKUP_RESERVE = 10  # % kept by the battery for the backup line

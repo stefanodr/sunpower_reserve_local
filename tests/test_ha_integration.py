@@ -104,6 +104,7 @@ async def test_setup_and_values(hass, inverter):
         _, reg_entry = _state(hass, entry, key)
         assert reg_entry.disabled_by is None, key
     assert float(_state(hass, entry, "battery_stored_energy")[0].state) == 6.7
+    assert float(_state(hass, entry, "battery_usable_energy")[0].state) == 5.75
     assert _state(hass, entry, "inverter_firmware")[0].state == "01000.165"
     assert _state(hass, entry, "bms_firmware")[0].state == "V1.55"
     assert _state(hass, entry, "ems_firmware")[0].state == "V0.11.50F"
@@ -143,7 +144,7 @@ async def test_options_offsets(hass, inverter):
         domain=DOMAIN,
         data={"host": "127.0.0.1", "port": inverter, "unit": 85},
         options={"pv_energy_offset": 12230.3, "house_energy_offset": 10461.84,
-                 "battery_usable_capacity": 10.0},
+                 "battery_usable_capacity": 10.0, "battery_backup_reserve": 20},
     )
     entry.add_to_hass(hass)
     assert await hass.config_entries.async_setup(entry.entry_id)
@@ -152,5 +153,6 @@ async def test_options_offsets(hass, inverter):
     assert float(_state(hass, entry, "house_energy")[0].state) == 10461.84
     assert float(_state(hass, entry, "pv_energy_daily")[0].state) == 0.0
     assert float(_state(hass, entry, "battery_stored_energy")[0].state) == 7.0
+    assert float(_state(hass, entry, "battery_usable_energy")[0].state) == 5.0
     assert await hass.config_entries.async_unload(entry.entry_id)
     await hass.async_block_till_done()

@@ -19,6 +19,7 @@ PERIOD_SOURCES: dict[str, tuple[str, ...]] = {
 }
 
 DEFAULT_USABLE_CAPACITY = 9.576  # kWh
+DEFAULT_BACKUP_RESERVE = 10  # % of charge reserved for the backup line
 IDLE_THRESHOLD_W = 20
 
 
@@ -62,6 +63,7 @@ class EnergyAccumulator:
         self.baselines: dict[str, dict[str, Any]] = dict(saved.get("baselines", {}))
         self.offsets: dict[str, float] = {}
         self.usable_capacity: float = DEFAULT_USABLE_CAPACITY
+        self.backup_reserve: float = DEFAULT_BACKUP_RESERVE
         self._last: dict[str, tuple[float, float]] = {}
 
     def to_dict(self) -> dict[str, Any]:
@@ -91,6 +93,12 @@ class EnergyAccumulator:
         soc = data.get("battery_soc")
         data["battery_stored_energy"] = (
             None if soc is None else round(soc / 100 * self.usable_capacity, 2)
+        )
+        # energy that can really be discharged: the backup reserve is not usable
+        data["battery_usable_energy"] = (
+            None
+            if soc is None
+            else round(max(soc - self.backup_reserve, 0) / 100 * self.usable_capacity, 2)
         )
 
         for source, periods in PERIOD_SOURCES.items():
@@ -125,10 +133,11 @@ class EnergyAccumulator:
             else round(min(max((1 - imp / house) * 100, 0), 100))
         )
         power, stored = data.get("battery_power"), data.get("battery_stored_energy")
+        usable = data.get("battery_usable_energy")
         empty = full = None
-        if power is not None and stored is not None:
+        if power is not None and stored is not None and usable is not None:
             if power > IDLE_THRESHOLD_W:
-                empty = round(stored / (power / 1000), 1)
+                empty = round(usable / (power / 1000), 1)
             elif power < -IDLE_THRESHOLD_W:
                 full = round(max(self.usable_capacity - stored, 0) / (-power / 1000), 1)
         data["battery_time_to_empty"] = empty

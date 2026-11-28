@@ -172,7 +172,19 @@ def test_energy():
     assert d["battery_time_to_full"] == round((9.576 - 4.788) / 2.0, 1) and d["battery_time_to_empty"] is None
     d = dict(d0, battery_power=500.0, battery_soc=50.0)
     acc3.update(d, datetime(2026, 11, 22, 12, 0, 15), 15.0)
-    assert d["battery_time_to_empty"] == round(4.788 / 0.5, 1) and d["battery_time_to_full"] is None
+    # the 10 % backup reserve is not usable: (50 - 10) % of 9.576 kWh
+    assert d["battery_usable_energy"] == round(0.4 * 9.576, 2)
+    assert d["battery_time_to_empty"] == round(0.4 * 9.576 / 0.5, 1) and d["battery_time_to_full"] is None
+    # at or below the reserve nothing is usable
+    d = dict(d0, battery_power=500.0, battery_soc=8.0)
+    acc3.update(d, datetime(2026, 11, 22, 12, 0, 20), 20.0)
+    assert d["battery_usable_energy"] == 0.0 and d["battery_time_to_empty"] == 0.0
+    # custom reserve
+    acc3.backup_reserve = 20.0
+    d = dict(d0, battery_power=500.0, battery_soc=50.0)
+    acc3.update(d, datetime(2026, 11, 22, 12, 0, 25), 25.0)
+    assert d["battery_usable_energy"] == round(0.3 * 9.576, 2)
+    acc3.backup_reserve = 10.0
     d = dict(d0, battery_power=0.0, battery_soc=50.0)
     acc3.update(d, datetime(2026, 11, 22, 12, 0, 30), 30.0)
     assert d["battery_time_to_empty"] is None and d["battery_time_to_full"] is None

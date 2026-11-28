@@ -26,6 +26,7 @@
           "scan_interval": "Polling interval (seconds)",
           "pv_energy_offset": "PV energy offset (kWh)",
           "house_energy_offset": "House energy offset (kWh)",
+          "battery_backup_reserve": "Backup reserve (% of charge)",
           "battery_usable_capacity": "Battery usable capacity (kWh)"
         },
         "description": "Offsets are added to the integrated PV and house energy totals, e.g. to match the totals of another source. Period counters are not affected."
@@ -217,6 +218,9 @@
       },
       "battery_stored_energy": {
         "name": "Battery stored energy"
+      },
+      "battery_usable_energy": {
+        "name": "Battery usable energy"
       },
       "export_limit": {
         "name": "Export limit"
